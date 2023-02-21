@@ -50,6 +50,13 @@ require('packer').startup(function(use)
   use 'lewis6991/gitsigns.nvim'
 
   use 'navarasu/onedark.nvim' -- Theme inspired by Atom
+  use {
+	  'dracula/vim',
+	  config = function()
+		  as = 'dracula'
+		  -- vim.cmd('colorscheme dracula')
+	  end
+  }
   use 'nvim-lualine/lualine.nvim' -- Fancier statusline
   use 'lukas-reineke/indent-blankline.nvim' -- Add indentation guides even on blank lines
   use 'numToStr/Comment.nvim' -- "gc" to comment visual regions/lines
@@ -62,6 +69,50 @@ require('packer').startup(function(use)
   use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
   use 'mbbill/undotree'
   use 'onsails/lspkind.nvim'
+  use 'segeljakt/vim-silicon'
+
+  use {
+    "jose-elias-alvarez/null-ls.nvim",
+    "jay-babu/mason-null-ls.nvim",
+  }
+--  use { 'jiangmiao/auto-pairs' }
+  use { 'windwp/nvim-ts-autotag' }
+  use 'cohama/lexima.vim'
+  use 'tpope/vim-surround'
+  use 'tpope/vim-commentary'
+  use { 'folke/which-key.nvim',
+    config = function ()
+      require("which-key").setup {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+    }
+    end
+  }
+
+  use {'akinsho/bufferline.nvim',
+    config = function ()
+      require('bufferline').setup({
+        options = {
+          mode = 'buffers',
+          offsets = {
+            {filetype = 'netrw'}
+          },
+        },
+        highlights = {
+          buffer_selected = {
+            italic = false
+          },
+          indicator_selected = {
+            fg = {attribute = 'fg', highlight = 'Function'},
+            italic = false
+          }
+        }
+      })
+    end
+  }
+
+  use 'kyazdani42/nvim-web-devicons'
 
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
@@ -90,7 +141,7 @@ end
 -- Automatically source and re-compile packer whenever you save this init.lua
 local packer_group = vim.api.nvim_create_augroup('Packer', { clear = true })
 vim.api.nvim_create_autocmd('BufWritePost', {
-  command = 'source <afile> | silent! LspStop | silent! LspStart | PackerCompile',
+  command = 'source <afile> | PackerSync',
   group = packer_group,
   pattern = vim.fn.expand '$MYVIMRC',
 })
@@ -123,7 +174,7 @@ vim.wo.signcolumn = 'yes'
 
 -- Set colorscheme
 vim.o.termguicolors = true
-vim.cmd [[colorscheme onedark]]
+vim.cmd [[colorscheme dracula]]
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
@@ -158,10 +209,13 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- See `:help lualine.txt`
 require('lualine').setup {
   options = {
-    icons_enabled = false,
-    theme = 'onedark',
+    icons_enabled = true,
+    theme = 'dracula',
     component_separators = '|',
     section_separators = '',
+    disabled_filetypes = {
+      statusline = {'netrw'}
+    }
   },
 }
 
@@ -286,7 +340,7 @@ require('nvim-treesitter.configs').setup {
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
+vim.keymap.set('n', '<leader>of', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
 -- LSP settings.
@@ -346,7 +400,7 @@ local servers = {
   -- rust_analyzer = {},
   -- tsserver = {},
 
-  sumneko_lua = {
+  lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
@@ -363,10 +417,13 @@ capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 -- Setup mason so it can manage external tooling
 require('mason').setup()
-
+local null_ls = require 'null-ls'
 -- Ensure the servers above are installed
 local mason_lspconfig = require 'mason-lspconfig'
-
+require ('mason-null-ls').setup({
+  ensure_installed = {'stylua', 'jq'},
+  automatic_setup = true, 
+})
 mason_lspconfig.setup {
   ensure_installed = vim.tbl_keys(servers),
 }
@@ -381,6 +438,24 @@ mason_lspconfig.setup_handlers {
   end,
 }
 
+require 'mason-null-ls'.setup_handlers {
+    function(source_name, methods)
+      -- all sources with no handler get passed here
+
+      -- To keep the original functionality of `automatic_setup = true`,
+      -- please add the below.
+      require("mason-null-ls.automatic_setup")(source_name, methods)
+    end,
+    stylua = function(source_name, methods)
+      null_ls.register(null_ls.builtins.formatting.stylua)
+    end,
+}
+null_ls.setup({
+  sources = {
+   -- null_ls.builtins.formatting.eslint,
+   -- null_ls.builtins.diagnostics.eslint
+  }
+})
 -- Turn on lsp status information
 require('fidget').setup()
 
@@ -474,7 +549,13 @@ cmp.setup {
 	},
 }
 
+require('nvim-ts-autotag').setup()
+
 require('passocacornio')
 
+
+vim.diagnostic.config({
+    virtual_text = false
+})
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
