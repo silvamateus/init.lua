@@ -28,6 +28,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 
 
+require('neodev').setup()
 
 
 vim.diagnostic.config({
