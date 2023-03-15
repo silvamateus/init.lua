@@ -114,6 +114,7 @@ require('packer').startup(function(use)
 
   use 'kyazdani42/nvim-web-devicons'
   use { "catppuccin/nvim", as = "catppuccin" }
+  use 'mattn/emmet-vim'
 
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
