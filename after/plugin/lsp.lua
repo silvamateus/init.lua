@@ -79,11 +79,27 @@ mason_lspconfig.setup({
 
 mason_lspconfig.setup_handlers({
 	function(server_name)
-		require("lspconfig")[server_name].setup({
-			capabilities = capabilities,
-			on_attach = on_attach,
-			settings = servers[server_name],
-		})
+		local function get_supported_capabilities()
+			local local_capabilities = capabilities
+			table.remove(local_capabilities.textDocument, 'formatting')
+			table.remove(local_capabilities.textDocument, 'rangeFormatting')
+			return local_capabilities
+		end
+
+		if (server_name ~= "volar") then
+			require("lspconfig")[server_name].setup({
+				capabilities = capabilities,
+				on_attach = on_attach,
+				settings = servers[server_name],
+			})
+		else
+			require("lspconfig")[server_name].setup({
+				capabilities = get_supported_capabilities(),
+				on_attach = on_attach,
+				settings = servers[server_name],
+			})
+
+		end
 	end,
 })
 
@@ -161,7 +177,7 @@ cmp.setup({
 		end,
 	},
 	mapping = cmp.mapping.preset.insert({
-		["<C-d>"] = cmp.mapping.scroll_docs(-4),
+		["<C-d>"] = cmp.mapping.scroll_docs( -4),
 		["<C-f>"] = cmp.mapping.scroll_docs(4),
 		["<C-Space>"] = cmp.mapping.complete(),
 		["<CR>"] = cmp.mapping.confirm({
@@ -180,8 +196,8 @@ cmp.setup({
 		["<S-Tab>"] = cmp.mapping(function(fallback)
 			if cmp.visible() then
 				cmp.select_prev_item()
-			elseif luasnip.jumpable(-1) then
-				luasnip.jump(-1)
+			elseif luasnip.jumpable( -1) then
+				luasnip.jump( -1)
 			else
 				fallback()
 			end
