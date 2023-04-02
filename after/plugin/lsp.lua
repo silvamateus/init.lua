@@ -98,12 +98,16 @@ require("mason-null-ls").setup_handlers({
 	stylua = function(source_name, methods)
 		null_ls.register(null_ls.builtins.formatting.stylua)
 	end,
+	pint = function(source_name, methods)
+		null_ls.register(null_ls.builtins.formatting.pint.with({ command = "pint" }))
+	end,
 })
 null_ls.setup({
-	-- sources = {
-	-- 	null_ls.builtins.formatting.eslint,
-	-- 	null_ls.builtins.diagnostics.eslint,
-	-- },
+	sources = {
+		-- 	null_ls.builtins.formatting.eslint,
+		-- 	null_ls.builtins.diagnostics.eslint,
+		-- null_ls.builtins.formatting.pint.with({ command = "pint"})
+	},
 	-- on_attach = function(client, bufnr)
 	-- 	if client.supports_method("textDocument/formatting") then
 	-- 		vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })

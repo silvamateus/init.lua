@@ -51,3 +51,9 @@ vim.keymap.set("n", "<leader>of", vim.diagnostic.open_float)
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist)
 vim.keymap.set({ "n", "i" }, "<C-l>", "<cmd>bNext<CR>")
 vim.keymap.set({ "n", "i" }, "<C-h>", "<cmd>bprevious<CR>")
+vim.keymap.set("n", "<C-w>", "<cmd>bd<CR>")
+
+-- Carbon now keymap
+-- vim.keymap.set("v", "<f5>", "<Cmd>CarbonNowSh<CR>")
+vim.cmd[[ vnoremap <F5> :CarbonNowSh<CR> ]]
+-- vim.cmd[[ nnoremap <C-w> :bd<CR> ]]
