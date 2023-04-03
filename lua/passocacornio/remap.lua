@@ -25,7 +25,12 @@ vim.keymap.set("i", "<C-c>", "<Esc>")
 vim.keymap.set("n", "Q", "<nop>")
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 vim.keymap.set("n", "<leader>lf", function()
-	vim.lsp.buf.format({ timeout_ms = 4000 })
+	vim.lsp.buf.format({
+		filter = function(client)
+			return client.name ~= "volar" or client.name ~= "tsserver"
+		end,
+		timeout_ms = 4000
+	})
 end)
 
 vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
@@ -55,5 +60,5 @@ vim.keymap.set("n", "<C-w>", "<cmd>bd<CR>")
 
 -- Carbon now keymap
 -- vim.keymap.set("v", "<f5>", "<Cmd>CarbonNowSh<CR>")
-vim.cmd[[ vnoremap <F5> :CarbonNowSh<CR> ]]
+vim.cmd [[ vnoremap <F5> :CarbonNowSh<CR> ]]
 -- vim.cmd[[ nnoremap <C-w> :bd<CR> ]]

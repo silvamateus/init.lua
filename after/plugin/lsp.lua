@@ -1,4 +1,11 @@
-local on_attach = function(_, bufnr)
+local on_attach = function(client, bufnr)
+	-- require("lsp-format").on_attach(client)
+	if client.name == "volar" then
+		client.server_capabilities.documentFormattingProvider = false
+	end
+	if client.name == "tsserver" then
+		client.server_capabilities.documentFormattingProvider = false
+	end
 	-- NOTE: Remember that lua is a real programming language, and as such it is possible
 	-- to define small helper and utility functions so you don't have to repeat yourself
 	-- many times.
@@ -81,12 +88,15 @@ mason_lspconfig.setup_handlers({
 	function(server_name)
 		local function get_supported_capabilities()
 			local local_capabilities = capabilities
-			table.remove(local_capabilities.textDocument, 'formatting')
-			table.remove(local_capabilities.textDocument, 'rangeFormatting')
+			for index, value in ipairs(local_capabilities.textDocument.completion.completionList.itemDefaults) do
+				if value == "insertTextFormat" then
+					table.remove(local_capabilities.textDocument.completion.completionList.itemDefaults, index)
+				end
+			end
 			return local_capabilities
 		end
 
-		if (server_name ~= "volar") then
+		if server_name ~= "volar" then
 			require("lspconfig")[server_name].setup({
 				capabilities = capabilities,
 				on_attach = on_attach,
@@ -98,7 +108,6 @@ mason_lspconfig.setup_handlers({
 				on_attach = on_attach,
 				settings = servers[server_name],
 			})
-
 		end
 	end,
 })
@@ -116,6 +125,9 @@ require("mason-null-ls").setup_handlers({
 	end,
 	pint = function(source_name, methods)
 		null_ls.register(null_ls.builtins.formatting.pint.with({ command = "pint" }))
+	end,
+	volar = function(source_name, methods)
+		null_ls.register(null_ls.builtins.formatting.none)
 	end,
 })
 null_ls.setup({
@@ -177,7 +189,7 @@ cmp.setup({
 		end,
 	},
 	mapping = cmp.mapping.preset.insert({
-		["<C-d>"] = cmp.mapping.scroll_docs( -4),
+		["<C-d>"] = cmp.mapping.scroll_docs(-4),
 		["<C-f>"] = cmp.mapping.scroll_docs(4),
 		["<C-Space>"] = cmp.mapping.complete(),
 		["<CR>"] = cmp.mapping.confirm({
@@ -196,8 +208,8 @@ cmp.setup({
 		["<S-Tab>"] = cmp.mapping(function(fallback)
 			if cmp.visible() then
 				cmp.select_prev_item()
-			elseif luasnip.jumpable( -1) then
-				luasnip.jump( -1)
+			elseif luasnip.jumpable(-1) then
+				luasnip.jump(-1)
 			else
 				fallback()
 			end
