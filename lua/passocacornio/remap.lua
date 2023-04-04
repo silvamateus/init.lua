@@ -54,7 +54,7 @@ vim.keymap.set("n", "[d", vim.diagnostic.goto_prev)
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
 vim.keymap.set("n", "<leader>of", vim.diagnostic.open_float)
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist)
-vim.keymap.set({ "n", "i" }, "<C-l>", "<cmd>bNext<CR>")
+vim.keymap.set({ "n", "i" }, "<C-l>", "<cmd>bnext<CR>")
 vim.keymap.set({ "n", "i" }, "<C-h>", "<cmd>bprevious<CR>")
 vim.keymap.set("n", "<C-w>", "<cmd>bd<CR>")
 
