@@ -116,6 +116,8 @@ require('packer').startup(function(use)
   use { "catppuccin/nvim", as = "catppuccin" }
   use 'mattn/emmet-vim'
   use 'kristijanhusak/vim-carbon-now-sh'
+  -- use "lukas-reineke/lsp-format.nvim"
+  use "chrisbra/Colorizer"
 
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
   local has_plugins, plugins = pcall(require, 'custom.plugins')
