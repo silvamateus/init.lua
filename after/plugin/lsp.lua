@@ -77,7 +77,7 @@ local null_ls = require("null-ls")
 -- Ensure the servers above are installed
 local mason_lspconfig = require("mason-lspconfig")
 require("mason-null-ls").setup({
-	ensure_installed = { "stylua", "jq" },
+	ensure_installed = { "stylua", "jq", "volar", "tsserver" },
 	automatic_setup = true,
 })
 mason_lspconfig.setup({
@@ -112,23 +112,25 @@ mason_lspconfig.setup_handlers({
 	end,
 })
 
-require("mason-null-ls").setup_handlers({
-	function(source_name, methods)
-		-- all sources with no handler get passed here
+require("mason-null-ls").setup({
+	handlers = {
+		function(source_name, methods)
+			-- all sources with no handler get passed here
 
-		-- To keep the original functionality of `automatic_setup = true`,
-		-- please add the below.
-		require("mason-null-ls.automatic_setup")(source_name, methods)
-	end,
-	stylua = function(source_name, methods)
-		null_ls.register(null_ls.builtins.formatting.stylua)
-	end,
-	pint = function(source_name, methods)
-		null_ls.register(null_ls.builtins.formatting.pint.with({ command = "pint" }))
-	end,
-	volar = function(source_name, methods)
-		null_ls.register(null_ls.builtins.formatting.none)
-	end,
+			-- To keep the original functionality of `automatic_setup = true`,
+			-- please add the below.
+			require("mason-null-ls.automatic_setup")(source_name, methods)
+		end,
+		stylua = function(source_name, methods)
+			null_ls.register(null_ls.builtins.formatting.stylua)
+		end,
+		pint = function(source_name, methods)
+			null_ls.register(null_ls.builtins.formatting.pint.with({ command = "pint" }))
+		end,
+		volar = function(source_name, methods)
+			null_ls.register(null_ls.builtins.formatting.none)
+		end,
+	}
 })
 null_ls.setup({
 	sources = {
