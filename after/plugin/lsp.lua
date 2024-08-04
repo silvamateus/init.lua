@@ -78,6 +78,7 @@ local null_ls = require("null-ls")
 local mason_lspconfig = require("mason-lspconfig")
 require("mason-null-ls").setup({
 	ensure_installed = { "stylua", "jq", "volar", "tsserver" },
+	automatic_installation = true,
 	automatic_setup = true,
 })
 mason_lspconfig.setup({
@@ -223,6 +224,8 @@ cmp.setup({
 		{ name = "cmp_tabnine" },
 	},
 	formatting = {
+		-- fields = source_mapping,
+		expandable_indicator = false,
 		format = function(entry, vim_item)
 			-- if you have lspkind installed, you can use it like
 			-- in the following line:

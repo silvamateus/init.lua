@@ -140,6 +140,7 @@ require("packer").startup(function(use)
 			}, { mode = "foreground" })
 		end,
 	})
+	use 'mfussenegger/nvim-jdtls'
 	-- use "lukas-reineke/lsp-format.nvim"
 	-- use "chrisbra/Colorizer"
 
